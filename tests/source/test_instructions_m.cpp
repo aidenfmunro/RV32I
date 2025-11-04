@@ -1,3 +1,41 @@
+#include <gtest/gtest.h>
+#include <iostream>
+
+#include "Interpreter.hpp"
+#include "Decoder.hpp"
+#include "Encoder.hpp"
+#include "Opcodes.hpp"
+#include "Formats.hpp"
+#include "Operations.hpp"
+#include "HandlerFactory.hpp"
+
+#include "Handlers.hpp"
+
+using namespace rv32i;
+
+class Rv32iTest : public ::testing::Test 
+{
+protected:
+    Interpreter cpu;
+
+    void SetUp() override 
+    {
+        register_all_handlers(cpu); 
+
+        cpu.state.pc = 0x1000;
+
+        for (auto& r : cpu.state.regs) r = 0;
+
+        cpu.state.memory.clear();
+    }
+
+    void run(u32 instr) 
+    {
+        auto [info, key] = Decoder::decode(instr, cpu.pc());
+        cpu.dispatch(cpu.state, info, key);
+    }
+};
+
 TEST_F(Rv32iTest, MUL_MultipliesRegisters)
 {
     // x1 = 6, x2 = 7
