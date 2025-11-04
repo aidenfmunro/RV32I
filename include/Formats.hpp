@@ -142,11 +142,6 @@ struct FormatU
     template<typename Oper>
     static ExecutionStatus execute(InterpreterState& s, InstrInfo const& info)
     {
-        std::cerr << "[DEBUG] Executing " << Oper::name
-              << " rd=" << int(info.rd)
-              << " pc=0x" << std::hex << info.pc
-              << " imm=0x" << info.imm
-             << std::dec << std::endl;
 
         if constexpr (std::is_same_v<Oper, LuiOp>)
         {

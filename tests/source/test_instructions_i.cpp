@@ -80,10 +80,8 @@ TEST_F(Rv32iTest, SW_LW_StoreAndLoadWord)
     // sw x2, 0(x1)
     SEncoding s_e{0, 2, 1, 0x2, Opcode::S_TYPE};
     run(encode(s_e));
-    cpu.state.memory.dump(cpu.state.regs[1]);
 
     u32 val = cpu.state.memory.LoadU32(cpu.state.regs[1]);
-    std::cerr << "Val: " << std::hex << val << std::dec << std::endl;
     // lw x3, 0(x1)
     IEncoding i_e{0, 1, 0x2, 0x3, Opcode::LOAD};
     run(encode(i_e));
