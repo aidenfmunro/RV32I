@@ -1,5 +1,7 @@
 #pragma once
 
+namespace rv32i {
+
 enum class ExecutionStatus 
 { 
     Success, 
@@ -8,4 +10,5 @@ enum class ExecutionStatus
     TrapStoreFault 
 };
 
+} // namespace rv32i
 

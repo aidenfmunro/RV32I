@@ -8,7 +8,7 @@
 #include "InterpreterState.hpp"
 #include "Status.hpp"
 #include "InstrInfo.hpp"
-#include "Opearations.hpp"
+#include "Operations.hpp"
 
 #include <iostream>
 

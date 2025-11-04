@@ -19,4 +19,4 @@ enum Opcode : u8
     SYSTEM    = 0x73
 };
 
-}
+} // namespace rv32i

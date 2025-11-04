@@ -31,12 +31,14 @@ static u32 setupStack(Interpreter& cpu,
     std::vector<u32> argv_ptrs;
     argv_ptrs.reserve(args.size());
 
-    for (const auto& s : args) {
+    for (const auto& s : args) 
+    {
         const u32 len = static_cast<u32>(s.size());
         const u32 start = cursor - (len + 1); // include terminating NUL
+        
         // write bytes
-        for (u32 i = 0; i < len; ++i)
-            cpu.store<u8>(start + i, static_cast<u8>(s[i]));
+        cpu.writeBlock(start, reinterpret_cast<const u8*>(s.data()), len);
+
         cpu.store<u8>(start + len, 0);
         argv_ptrs.push_back(start);
         // keep 4-byte alignment between strings
@@ -46,13 +48,16 @@ static u32 setupStack(Interpreter& cpu,
     // Now place argc + argv array at the very top
     const u32 argc_u32 = static_cast<u32>(args.size());
     const u32 argv_bytes = 4u * (argc_u32 + 1u); // + one NULL
+    
     u32 sp = stack_top - (4u /*argc*/ + argv_bytes);
 
     // argc
     cpu.store<u32>(sp + 0, argc_u32);
+    
     // argv[i]
     for (u32 i = 0; i < argc_u32; ++i)
         cpu.store<u32>(sp + 4u + 4u * i, argv_ptrs[i]);
+
     // argv terminator
     cpu.store<u32>(sp + 4u /* argc */ + 4u * argc_u32, 0);
 
@@ -124,7 +129,7 @@ ElfLoadResult loadElf(
         throw std::runtime_error("No PT_LOAD segments in ELF");
 
     // Choose a stack top:
-    // - if caller gave a hint, use it (align to 16)
+    // - if caller gives a hint, use it (align to 16)
     // - otherwise put it >= max_vaddr + 1MB, and at least 16MB total space
 
     u32 stack_top = 0;

@@ -6,7 +6,7 @@
 #include "Encoder.hpp"
 #include "Opcodes.hpp"
 #include "Formats.hpp"
-#include "Opearations.hpp"
+#include "Operations.hpp"
 #include "HandlerFactory.hpp"
 
 #include "Handlers.hpp"

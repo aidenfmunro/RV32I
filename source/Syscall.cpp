@@ -18,18 +18,17 @@ ExecutionStatus handle_syscall(InterpreterState& s)
 
     switch (syscall_num) 
     {
-        case Syscall::READ: // read
+        case Syscall::READ:
         {
             u32 bytesRead = 0;
 
             if (a0 == 0) 
-            { // stdin
+            { 
                 for (u32 i = 0; i < a2; ++i) 
                  {
                     char c;
                     if (!std::cin.get(c)) break;
                     
-                    // std::cerr << c;
                     s.memory.StoreU8(a1 + i, static_cast<u8>(c));
 
                     bytesRead++;
@@ -43,10 +42,10 @@ ExecutionStatus handle_syscall(InterpreterState& s)
             return ExecutionStatus::Success;
         }
 
-        case Syscall::WRITE: // write
+        case Syscall::WRITE:
         {
             if (a0 == 1) 
-                { // stdout
+            {
                 for (u32 i = 0; i < a2; ++i) 
                 {
                     char c = static_cast<char>(s.memory.LoadU8(a1 + i));
@@ -61,10 +60,10 @@ ExecutionStatus handle_syscall(InterpreterState& s)
             return ExecutionStatus::Success;
         }
 
-        case Syscall::EXIT: // exit
+        case Syscall::EXIT: 
         {
             int exit_code = static_cast<int>(a0);
-            // std::cerr << "\n[Program exited with code " << exit_code << "]\n";
+
             std::exit(exit_code);
         }
 

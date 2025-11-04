@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IntTypes.hpp"
+
 namespace rv32i {
 
 u8 get_opcode(u32 w); 

@@ -17,4 +17,4 @@ struct InterpreterState
     InterpreterState() = default; 
 };
 
-}
+} // namespace rv32i

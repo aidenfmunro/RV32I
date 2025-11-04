@@ -49,7 +49,7 @@ s32 get_imm_i(u32 w)
 s32 get_imm_s(u32 w) 
 {
     s32 imm = ((w >> 25) << 5) | ((w >> 7) & 0x1F);
-    return (imm << 20) >> 20; // now imm is signed, sign extends correctly
+    return (imm << 20) >> 20; 
 }
 
 s32 get_imm_b(u32 w) 

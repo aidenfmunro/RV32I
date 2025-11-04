@@ -13,7 +13,7 @@ endif()
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
-set(SANITIZER_FLAGS "-fsanitize=address,undefined -fno-omit-frame-pointer -g3 -O1")
+# set(SANITIZER_FLAGS "-fsanitize=address,undefined -fno-omit-frame-pointer -g3 -O1")
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${SANITIZER_FLAGS}")
@@ -27,11 +27,12 @@ file(GLOB SOURCES
     ${PROJECT_SOURCE_DIR}/source/*.cpp
 )
 
+
 add_executable(rv32i main.cpp ${SOURCES})
 
 target_include_directories(rv32i PRIVATE
-    ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_SOURCE_DIR}/third_party/ELFIO
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/third_party/ELFIO
 )
 
 # target_link_libraries(rv32i PRIVATE loguru)
@@ -48,6 +49,7 @@ target_compile_features(tests PUBLIC cxx_std_20)
 
 target_include_directories(tests PRIVATE
 	${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/third_party/ELFIO
 )
 
 target_link_libraries(tests
