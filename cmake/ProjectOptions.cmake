@@ -1,11 +1,10 @@
 include_guard(GLOBAL)
 
-# ---- Feature toggles ----
-option(RV32I_ENABLE_WERROR "Treat warnings as errors" OFF)
-option(RV32I_ENABLE_ASAN   "Enable AddressSanitizer (Debug)" ON)
-option(RV32I_ENABLE_UBSAN  "Enable UndefinedBehaviorSanitizer (Debug)" ON)
-option(RV32I_ENABLE_TSAN   "Enable ThreadSanitizer (Debug)" OFF)
-option(RV32I_ENABLE_IPO    "Enable LTO/IPO (Release, RelWithDebInfo)" ON)
+option(RV32I_ENABLE_WERROR "Treat warnings as errors"                  OFF)
+option(RV32I_ENABLE_ASAN   "Enable AddressSanitizer (Debug)"           OFF)
+option(RV32I_ENABLE_UBSAN  "Enable UndefinedBehaviorSanitizer (Debug)" OFF)
+option(RV32I_ENABLE_TSAN   "Enable ThreadSanitizer (Debug)"            OFF)
+option(RV32I_ENABLE_IPO    "Enable LTO/IPO (Release, RelWithDebInfo)"  OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -39,7 +38,7 @@ function(rv32i_apply_project_options target)
     endif()
   endif()
 
-  
+
   if(NOT MSVC)
     # Debug
     target_compile_options(${target} PRIVATE

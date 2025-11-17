@@ -129,7 +129,6 @@ struct EncodingTraits<UEncoding>
 {
     static u32 encode(const UEncoding& e) 
     {
-        std::cerr << e.opcode << std::endl;
         return (u32(e.imm) & 0xFFFFF000)
              | (u32(e.rd) << 7)
              | u32(e.opcode);

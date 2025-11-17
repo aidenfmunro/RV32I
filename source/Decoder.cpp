@@ -26,7 +26,7 @@ std::pair<InstrInfo, u32> Decoder::decode(u32 instr_word, u32 pc)
             info.imm = 0;
             key |= u32(funct7) << 16;
             key |= u32(funct3) << 8;
-            break; // R
+            break; 
         case Opcode::I_TYPE:
             key |= u32(funct3) << 8;
             info.imm = static_cast<u32>(get_imm_i(instr_word));
@@ -46,8 +46,6 @@ std::pair<InstrInfo, u32> Decoder::decode(u32 instr_word, u32 pc)
             break;
         case Opcode::U_LUI:
         case Opcode::U_AUIPC:
-            std::cerr << "Imhere" << std::endl;
-            std::cerr << int(info.rd) << std::endl;
             info.imm = static_cast<u32>(get_imm_u(instr_word)); 
             break;
         case Opcode::J_TYPE:

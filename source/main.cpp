@@ -1,13 +1,12 @@
 #include <iostream>
 #include <vector>
 
+#include "Handlers.hpp"
 #include "Interpreter.hpp"
 #include "ElfLoader.hpp"
-#include "Decoder.hpp"
-#include "Status.hpp"
-#include "Debugger.hpp"
 
-#include "Handlers.hpp"
+#include "Status.hpp"
+#include "Runner.hpp"
 
 using namespace rv32i;
 
@@ -20,42 +19,22 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    Debugger dbg(true /* enable */, "trace.log", argv[1]);
-
     std::vector<std::string> args(argv + 1, argv + argc);
     Interpreter cpu{};
 
-    try
-    {
-        auto load = loadElf(cpu, argv[1], args, 0);
-    } 
-    catch (const std::exception& e) 
-    {
-        std::cerr << "Failed to load ELF:" << e.what() << "\n";
 
-        return 1;
-    }
+    auto load = loadElf(cpu, argv[1], args, 0);
 
     register_all_handlers(cpu);
+    // register_F_extension(cpu); // later
 
-    const int CYCLE_LIMIT = 1000000;
-    for (int cycles = 0; cycles < CYCLE_LIMIT; ++cycles)
-    {
-        u32 instr = cpu.load<u32>(cpu.pc());
-        auto [info, key] = Decoder::decode(instr, cpu.pc());
+    auto result = run_program(cpu);
 
-        dbg.dump_pc(cpu.state);
-        dbg.trace_instruction(info, instr);
+    if (result.status == ExecutionStatus::ProgramExit)
+        return result.exit_code;
 
-        ExecutionStatus st = cpu.dispatch(cpu.state, info, key);
+    std::cerr << "Program ended with status " << int(result.status) << "\n";
 
-        dbg.dump_registers(cpu.state);
-
-        if (st != ExecutionStatus::Success)
-            break;
-    }
-
-
-    return 0;
+    return -1;
 }
 

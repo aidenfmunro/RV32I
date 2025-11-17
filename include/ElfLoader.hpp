@@ -15,11 +15,11 @@ struct ElfLoadResult
     u32 sp        = 0; // initial sp
 };
 
-ElfLoadResult loadElf(
-    Interpreter& cpu,
-    const std::string& elf_path,
-    const std::vector<std::string>& args,
-    u32 stack_top_hint);
+ElfLoadResult loadElf(Interpreter& cpu,
+                      const std::string& elf_path,
+                      const std::vector<std::string>& args,
+                      u32 stack_top_hint
+                     );
 
 } // namespace rv32i
 

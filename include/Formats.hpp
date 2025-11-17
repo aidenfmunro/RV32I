@@ -78,7 +78,6 @@ struct FormatLoad  //> load variants handled by Oper type selection
         }
         else
         {
-            std::cerr << std::hex << int(info.rd) << std::dec << std::endl;
             s.regs[info.rd] = s.memory.LoadU32(addr);
         }
 
@@ -146,8 +145,6 @@ struct FormatU
         if constexpr (std::is_same_v<Oper, LuiOp>)
         {
             if (info.rd != 0) s.regs[info.rd] = info.imm;
-
-            std::cerr << info.rd << std::endl;
         }
         else if constexpr (std::is_same_v<Oper, AuipcOp>)
         {

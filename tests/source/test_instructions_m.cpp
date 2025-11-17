@@ -9,14 +9,14 @@
 
 using namespace rv32i;
 
-class Rv32iTest : public ::testing::Test 
+class Rv32MTest : public ::testing::Test
 {
 protected:
     Interpreter cpu;
 
-    void SetUp() override 
+    void SetUp() override
     {
-        register_all_handlers(cpu); 
+        register_all_handlers(cpu);
 
         cpu.state.pc = 0x1000;
 
@@ -25,14 +25,14 @@ protected:
         cpu.state.memory.clear();
     }
 
-    void run(u32 instr) 
+    void run(u32 instr)
     {
         auto [info, key] = Decoder::decode(instr, cpu.pc());
         cpu.dispatch(cpu.state, info, key);
     }
 };
 
-TEST_F(Rv32iTest, MUL_MultipliesRegisters)
+TEST_F(Rv32MTest, MUL_MultipliesRegisters)
 {
     // x1 = 6, x2 = 7
     cpu.state.regs[1] = 6u;
@@ -52,7 +52,7 @@ TEST_F(Rv32iTest, MUL_MultipliesRegisters)
     EXPECT_EQ(cpu.state.pc, 0x1004u);
 }
 
-TEST_F(Rv32iTest, MULH_HighSignedSigned)
+TEST_F(Rv32MTest, MULH_HighSignedSigned)
 {
     // a = -2, b = 3
     cpu.state.regs[1] = 0xFFFFFFFEu; // -2 as u32
@@ -69,7 +69,7 @@ TEST_F(Rv32iTest, MULH_HighSignedSigned)
     EXPECT_EQ(cpu.state.regs[3], 0xFFFFFFFFu);
 }
 
-TEST_F(Rv32iTest, MULHSU_HighSignedUnsigned)
+TEST_F(Rv32MTest, MULHSU_HighSignedUnsigned)
 {
     // a = -2 (signed), b = 3 (unsigned)
     cpu.state.regs[1] = 0xFFFFFFFEu; // -2
@@ -85,7 +85,7 @@ TEST_F(Rv32iTest, MULHSU_HighSignedUnsigned)
     EXPECT_EQ(cpu.state.regs[3], 0xFFFFFFFFu);
 }
 
-TEST_F(Rv32iTest, MULHU_HighUnsignedUnsigned)
+TEST_F(Rv32MTest, MULHU_HighUnsignedUnsigned)
 {
     // a = 0x80000000, b = 2
     cpu.state.regs[1] = 0x80000000u;
@@ -102,7 +102,7 @@ TEST_F(Rv32iTest, MULHU_HighUnsignedUnsigned)
     EXPECT_EQ(cpu.state.regs[3], 0x00000001u);
 }
 
-TEST_F(Rv32iTest, DIV_SignedDivision)
+TEST_F(Rv32MTest, DIV_SignedDivision)
 {
     // a = 7, b = -2
     cpu.state.regs[1] = 7u;
@@ -117,7 +117,7 @@ TEST_F(Rv32iTest, DIV_SignedDivision)
     EXPECT_EQ(cpu.state.regs[3], 0xFFFFFFFDu); // -3 as u32
 }
 
-TEST_F(Rv32iTest, DIV_DivByZeroYieldsMinusOne)
+TEST_F(Rv32MTest, DIV_DivByZeroYieldsMinusOne)
 {
     cpu.state.regs[1] = 123u; // dividend
     cpu.state.regs[2] = 0u;   // divisor = 0
@@ -129,7 +129,7 @@ TEST_F(Rv32iTest, DIV_DivByZeroYieldsMinusOne)
     EXPECT_EQ(cpu.state.regs[3], 0xFFFFFFFFu);
 }
 
-TEST_F(Rv32iTest, DIVU_UnsignedDivision)
+TEST_F(Rv32MTest, DIVU_UnsignedDivision)
 {
     cpu.state.regs[1] = 7u;
     cpu.state.regs[2] = 2u;
@@ -143,7 +143,7 @@ TEST_F(Rv32iTest, DIVU_UnsignedDivision)
     EXPECT_EQ(cpu.state.regs[3], 3u);
 }
 
-TEST_F(Rv32iTest, DIVU_DivByZeroYieldsAllOnes)
+TEST_F(Rv32MTest, DIVU_DivByZeroYieldsAllOnes)
 {
     cpu.state.regs[1] = 123u;
     cpu.state.regs[2] = 0u;
@@ -155,7 +155,7 @@ TEST_F(Rv32iTest, DIVU_DivByZeroYieldsAllOnes)
     EXPECT_EQ(cpu.state.regs[3], 0xFFFFFFFFu);
 }
 
-TEST_F(Rv32iTest, REM_SignedRemainder)
+TEST_F(Rv32MTest, REM_SignedRemainder)
 {
     // a = 7, b = -2
     cpu.state.regs[1] = 7u;
@@ -170,7 +170,7 @@ TEST_F(Rv32iTest, REM_SignedRemainder)
     EXPECT_EQ(cpu.state.regs[3], 1u);
 }
 
-TEST_F(Rv32iTest, REM_DivByZeroYieldsDividend)
+TEST_F(Rv32MTest, REM_DivByZeroYieldsDividend)
 {
     cpu.state.regs[1] = 123u; // dividend
     cpu.state.regs[2] = 0u;   // divisor
@@ -182,7 +182,7 @@ TEST_F(Rv32iTest, REM_DivByZeroYieldsDividend)
     EXPECT_EQ(cpu.state.regs[3], 123u);
 }
 
-TEST_F(Rv32iTest, REMU_UnsignedRemainder)
+TEST_F(Rv32MTest, REMU_UnsignedRemainder)
 {
     cpu.state.regs[1] = 7u;
     cpu.state.regs[2] = 2u;
@@ -196,7 +196,7 @@ TEST_F(Rv32iTest, REMU_UnsignedRemainder)
     EXPECT_EQ(cpu.state.regs[3], 1u);
 }
 
-TEST_F(Rv32iTest, REMU_DivByZeroYieldsDividend)
+TEST_F(Rv32MTest, REMU_DivByZeroYieldsDividend)
 {
     cpu.state.regs[1] = 123u;
     cpu.state.regs[2] = 0u;

@@ -2,13 +2,15 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <vector>
+
 #include "InterpreterState.hpp"
 #include "Status.hpp"
 #include "HandlerFactory.hpp"
 
 namespace rv32i {
 
-class Interpreter 
+class Interpreter
 {
     std::unordered_map<u32, Handler> handlers_;
 
@@ -20,11 +22,11 @@ public:
 
     void register_handler(u32 key, Handler h) { handlers_[key] = h; }
 
-    ExecutionStatus dispatch(InterpreterState& s, InstrInfo const& info, u32 key) const 
+    ExecutionStatus dispatch(InterpreterState& s, InstrInfo const& info, u32 key) const
     {
         auto it = handlers_.find(key);
 
-        if (it == handlers_.end()) 
+        if (it == handlers_.end())
         {
             return ExecutionStatus::TrapIllegal;
         }
@@ -33,7 +35,7 @@ public:
     }
 
     template<typename T>
-    T load(u32 addr) const 
+    T load(u32 addr) const
     {
         if constexpr (std::is_same_v<T, u8>)
             return state.memory.LoadU8(addr);
@@ -46,7 +48,7 @@ public:
     }
 
     template<typename T>
-    void store(u32 addr, T value) 
+    void store(u32 addr, T value)
     {
         if constexpr (std::is_same_v<T, u8>)
             state.memory.StoreU8(addr, value);

@@ -2,12 +2,13 @@
 
 namespace rv32i {
 
-enum class ExecutionStatus 
-{ 
-    Success, 
-    TrapIllegal, 
+enum class ExecutionStatus
+{
+    Success,
+    TrapIllegal,
     TrapLoadFault,
-    TrapStoreFault 
+    TrapStoreFault,
+    ProgramExit
 };
 
 } // namespace rv32i
