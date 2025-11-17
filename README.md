@@ -4,6 +4,10 @@
 
 A small RISC-V RV32 interpreter core
 
+## Getting the code
+```
+git clone --recurse-submodules https://github.com/aidenfmunro/RV32I.git
+```
 
 ## ISA / Extension Support
 
@@ -137,12 +141,10 @@ ctest --test-dir build/debug/tests
 
 Both **unit tests** and **e2e tests** are in the same binary.
 
----
 
 ### Unit tests
 
 Unit testing is focused on testing seperate instructions by encoding and dispatching them.
----
 
 ### End-to-End tests
 
