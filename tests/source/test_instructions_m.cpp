@@ -5,10 +5,6 @@
 #include "Decoder.hpp"
 #include "Encoder.hpp"
 #include "Opcodes.hpp"
-#include "Formats.hpp"
-#include "Operations.hpp"
-#include "HandlerFactory.hpp"
-
 #include "Handlers.hpp"
 
 using namespace rv32i;
