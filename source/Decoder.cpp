@@ -26,7 +26,7 @@ std::pair<InstrInfo, u32> Decoder::decode(u32 instr_word, u32 pc)
             info.imm = 0;
             key |= u32(funct7) << 16;
             key |= u32(funct3) << 8;
-            break; 
+            break;
         case Opcode::I_TYPE:
             key |= u32(funct3) << 8;
             info.imm = static_cast<u32>(get_imm_i(instr_word));
@@ -46,13 +46,39 @@ std::pair<InstrInfo, u32> Decoder::decode(u32 instr_word, u32 pc)
             break;
         case Opcode::U_LUI:
         case Opcode::U_AUIPC:
-            info.imm = static_cast<u32>(get_imm_u(instr_word)); 
+            info.imm = static_cast<u32>(get_imm_u(instr_word));
             break;
         case Opcode::J_TYPE:
-            info.imm = static_cast<u32>(get_imm_j(instr_word)); 
+            info.imm = static_cast<u32>(get_imm_j(instr_word));
             break;
+
+        case Opcode::F_LOAD:
+            key |= u32(funct3) << 8;
+            info.imm = static_cast<u32>(get_imm_i(instr_word));
+            break;
+
+        case Opcode::F_STORE:
+            key |= u32(funct3) << 8;
+            info.imm = static_cast<u32>(get_imm_s(instr_word));
+            break;
+
+        case Opcode::F_OP:
+            key |= u32(funct7) << 16;
+            key |= u32(funct3) << 8;
+            info.imm = 0;
+            break;
+
+        case Opcode::F_MADD:
+        case Opcode::F_MSUB:
+        case Opcode::F_NMSUB:
+        case Opcode::F_NMADD:
+            info.rs3 = get_rs3(instr_word);
+            // key = opcode only (ignore rm/fmt), FMADD variant decided by opcode
+            break;
+
+
         case Opcode::SYSTEM:
-            
+
         default:
             info.imm = 0;
             break; // FIXME: give default type!

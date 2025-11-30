@@ -68,7 +68,8 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(
         E2ETestCase{"echo",       "123",      "123\n", 1},
         E2ETestCase{"isqrt",      "9\n",        "3\n"},
-        E2ETestCase{"bubblesort", "3 3 1 2\n",  "1 2 3 \n"}
+        E2ETestCase{"bubblesort", "3 3 1 2\n",  "1 2 3 \n"},
+        E2ETestCase{"fcalc",      "4\n", "2\n"}
         // add more here
     )
 );

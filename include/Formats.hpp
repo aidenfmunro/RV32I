@@ -10,8 +10,6 @@
 #include "InstrInfo.hpp"
 #include "Operations.hpp"
 
-#include <iostream>
-
 namespace rv32i {
 
 struct FormatR
@@ -23,12 +21,133 @@ struct FormatR
         u32 a = s.regs[info.rs1];
         u32 b = s.regs[info.rs2];
 
-        u32 r = Oper::exec(a,b);
+        u32 r = Oper::exec(a, b);
 
         if (info.rd != 0)
             s.regs[info.rd] = r;
 
         s.pc = info.pc + 4u;
+
+        return ExecutionStatus::Success;
+    }
+};
+
+struct FormatFR
+{
+    template<typename Oper>
+    static ExecutionStatus execute(InterpreterState& s, InstrInfo const& info)
+    {
+
+        u32 a = s.fregs[info.rs1];
+        u32 b = s.fregs[info.rs2];
+
+        std::cerr << Oper::name << '\n';
+
+        u32 r = Oper::exec(a, b);
+
+        s.fregs[info.rd] = r;
+
+        s.pc = info.pc + 4u;
+
+        return ExecutionStatus::Success;
+    }
+};
+
+struct FormatFR4
+{
+    template<class Oper>
+    static ExecutionStatus execute(InterpreterState& s, InstrInfo const& info)
+    {
+        u32 a = s.fregs[info.rs1];
+        u32 b = s.fregs[info.rs2];
+        u32 c = s.fregs[info.rs3];
+
+        s.fregs[info.rd] = Oper::exec(a, b, c);
+
+        s.pc = info.pc + 4;
+
+        return ExecutionStatus::Success;
+    }
+};
+
+struct FormatF2I
+{
+    template<class Oper>
+    static ExecutionStatus execute(InterpreterState& s, InstrInfo const& info)
+    {
+        const u32 a = s.fregs[info.rs1];
+        const u32 b = s.fregs[info.rs2];
+
+        if (info.rd != 0)
+            s.regs[info.rd] = Oper::exec(a, b);
+
+        s.pc = info.pc + 4;
+
+        return ExecutionStatus::Success;
+    }
+};
+
+struct FormatI2F
+{
+    template<class Oper>
+    static ExecutionStatus execute(InterpreterState& s, InstrInfo const& info)
+    {
+        const u32 a = s.regs[info.rs1];
+        const u32 b = s.fregs[info.rs2];
+
+        s.fregs[info.rd] = Oper::exec(a, b);
+
+        s.pc = info.pc + 4;
+
+        return ExecutionStatus::Success;
+    }
+};
+
+struct FormatFCmp
+{
+    template<class Oper>
+    static ExecutionStatus execute(InterpreterState& s, InstrInfo const& info)
+    {
+        const u32 a = s.fregs[info.rs1];
+        const u32 b = s.fregs[info.rs2];
+
+        if (info.rd != 0)
+            s.regs[info.rd] = Oper::exec(a, b);
+
+        s.pc = info.pc + 4;
+
+        return ExecutionStatus::Success;
+    }
+};
+
+
+struct FormatFlw
+{
+    template<class Oper>
+    static ExecutionStatus execute(InterpreterState& s, InstrInfo const& info)
+    {
+        const u32 addr = s.regs[info.rs1] + info.imm; // FIXME: signed?
+
+        if (info.rd != 0)
+            s.fregs[info.rd] = s.memory.LoadU32(addr);
+
+        s.pc = info.pc + 4;
+
+        return ExecutionStatus::Success;
+    }
+};
+
+// FSW: store f[rs2] to addr = x[rs1] + imm
+struct FormatFsw
+{
+    template<class Oper>
+    static ExecutionStatus execute(InterpreterState& s, InstrInfo const& info)
+    {
+        const u32 addr = s.regs[info.rs1] + (s32)info.imm;
+
+        s.memory.StoreU32(addr, s.fregs[info.rs2]);
+
+        s.pc = info.pc + 4;
 
         return ExecutionStatus::Success;
     }
@@ -189,5 +308,6 @@ struct FormatJalr
         return ExecutionStatus::Success;
     }
 };
+
 
 } // namespace rv32i

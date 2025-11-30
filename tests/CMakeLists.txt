@@ -32,6 +32,7 @@ set(E2E_PROGRAMS
   echo
   isqrt
   bubblesort
+  fcalc
   # add more here
 )
 

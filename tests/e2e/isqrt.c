@@ -29,6 +29,8 @@ int main(void)
     int pos = 0;
     int n = parse_int(buf, nread, &pos);
     int r = isqrt(n);
+
     write_int_ln(r);
+
     exit(0);
 }

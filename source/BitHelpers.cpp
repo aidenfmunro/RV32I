@@ -1,43 +1,51 @@
+
+#include <bit>
+
 #include "BitHelpers.hpp"
 
 namespace rv32i {
 
-u32 bits(u32 w, int hi, int lo) 
+u32 bits(u32 w, int hi, int lo)
 {
     return (w >> lo) & ((1u << (hi - lo + 1)) - 1);
 }
 
-u8 get_opcode(u32 w) 
+u8 get_opcode(u32 w)
 {
-    return static_cast<u8>(bits(w, 6, 0)); 
+    return static_cast<u8>(bits(w, 6, 0));
 }
 
-u8 get_rd(u32 w)     
-{ 
-    return static_cast<u8>(bits(w, 11, 7)); 
+u8 get_rd(u32 w)
+{
+    return static_cast<u8>(bits(w, 11, 7));
 }
 
-u8 get_funct3(u32 w) 
-{ 
-    return static_cast<u8>(bits(w, 14, 12)); 
+u8 get_funct3(u32 w)
+{
+    return static_cast<u8>(bits(w, 14, 12));
 }
 
-u8 get_rs1(u32 w)    
-{ 
-    return static_cast<u8>(bits(w, 19, 15)); 
+u8 get_rs1(u32 w)
+{
+    return static_cast<u8>(bits(w, 19, 15));
 }
 
-u8 get_rs2(u32 w)    
-{ 
-    return static_cast<u8>(bits(w, 24, 20)); 
+u8 get_rs2(u32 w)
+{
+    return static_cast<u8>(bits(w, 24, 20));
 }
 
-u8 get_funct7(u32 w) 
-{ 
-    return static_cast<u8>(bits(w, 31, 25)); 
+u8 get_rs3(u32 w)
+{
+    return static_cast<u8>(bits(w, 31, 27));
 }
 
-s32 get_imm_i(u32 w) 
+u8 get_funct7(u32 w)
+{
+    return static_cast<u8>(bits(w, 31, 25));
+}
+
+s32 get_imm_i(u32 w)
 {
     u32 imm = (w >> 20) & 0xFFF;
     // sign-extend 12-bit immediate
@@ -46,20 +54,20 @@ s32 get_imm_i(u32 w)
     return static_cast<s32>(imm);
 }
 
-s32 get_imm_s(u32 w) 
+s32 get_imm_s(u32 w)
 {
     s32 imm = ((w >> 25) << 5) | ((w >> 7) & 0x1F);
-    return (imm << 20) >> 20; 
+    return (imm << 20) >> 20;
 }
 
-s32 get_imm_b(u32 w) 
-{ 
-    uint32_t imm = (bits(w, 31, 31) << 12) 
-        | (bits(w,  7,  7) << 11) 
-        | (bits(w, 30, 25) << 5) 
-        | (bits(w, 11,  8) << 1); 
+s32 get_imm_b(u32 w)
+{
+    uint32_t imm = (bits(w, 31, 31) << 12)
+        | (bits(w,  7,  7) << 11)
+        | (bits(w, 30, 25) << 5)
+        | (bits(w, 11,  8) << 1);
 
-    return static_cast<int32_t>(imm << 19) >> 19; 
+    return static_cast<int32_t>(imm << 19) >> 19;
 }
 
 s32 get_imm_u(u32 w)
@@ -67,14 +75,24 @@ s32 get_imm_u(u32 w)
     return static_cast<int32_t>(w) >> 12 << 12;
 }
 
-s32 get_imm_j(u32 w) 
-{ 
-    uint32_t imm = (bits(w,31,31) << 20) 
-        | (bits(w, 19, 12) << 12) 
-        | (bits(w, 20, 20) << 11) 
-        | (bits(w, 30, 21) << 1); 
+s32 get_imm_j(u32 w)
+{
+    uint32_t imm = (bits(w,31,31) << 20)
+        | (bits(w, 19, 12) << 12)
+        | (bits(w, 20, 20) << 11)
+        | (bits(w, 30, 21) << 1);
 
-    return static_cast<int32_t>(imm << 11) >> 11; 
+    return static_cast<int32_t>(imm << 11) >> 11;
+}
+
+float f32_from_bits(u32 b)
+{
+    return std::bit_cast<float>(b);
+}
+
+u32 bits_from_f32(float f)
+{
+    return std::bit_cast<u32>(f);
 }
 
 } // namespace rv32i
