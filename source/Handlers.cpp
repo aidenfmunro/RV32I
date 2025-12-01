@@ -4,6 +4,7 @@
 #include "Operations.hpp"
 #include "Syscall.hpp"
 #include "HandlerFactory.hpp"
+#include "Zbb.hpp"
 
 #define REG(KEYEXPR, FORMAT, INSTR) \
   cpu.register_handler((KEYEXPR), make_handler<FORMAT, INSTR>())
@@ -82,9 +83,8 @@ void register_all_handlers(Interpreter& cpu)
 
     // ---- RV32F ----
 
-    // FLW / FSW (funct3=010)
-    REG(key(Opcode::F_LOAD,  0x2, 0x00), FormatFlw, void);
-    REG(key(Opcode::F_STORE, 0x2, 0x00), FormatFsw, void);
+    REG(key(Opcode::F_LOAD,  0x2, 0x00), FormatFlw, FlwOp);
+    REG(key(Opcode::F_STORE, 0x2, 0x00), FormatFsw, FswOp);
 
     RM8(Opcode::F_OP, 0x00, FormatFR, FaddSOp);
     RM8(Opcode::F_OP, 0x04, FormatFR, FsubSOp);
@@ -119,6 +119,32 @@ void register_all_handlers(Interpreter& cpu)
     REG(key(Opcode::F_MSUB,  0x0, 0x0), FormatFR4, FmsubSOp);
     REG(key(Opcode::F_NMSUB, 0x0, 0x0), FormatFR4, FnmsubSOp);
     REG(key(Opcode::F_NMADD, 0x0, 0x0), FormatFR4, FnmaddSOp);
+
+    // ---- RV32 Zbb ----
+
+    REG(key(Opcode::R_TYPE, 0x7, 0x20), FormatR, AndnOp);
+    REG(key(Opcode::R_TYPE, 0x6, 0x20), FormatR, OrnOp);
+    REG(key(Opcode::R_TYPE, 0x4, 0x20), FormatR, XnorOp);
+
+    REG(key(Opcode::R_TYPE, 0x3, 0x0A), FormatR, MaxOp);
+    REG(key(Opcode::R_TYPE, 0x7, 0x0A), FormatR, MaxuOp);
+    REG(key(Opcode::R_TYPE, 0x2, 0x0A), FormatR, MinOp);
+    REG(key(Opcode::R_TYPE, 0x6, 0x0A), FormatR, MinuOp);
+
+    REG(ZBB_KEY_CLZ,   FormatI, ClzOp);
+    REG(ZBB_KEY_CTZ,   FormatI, CtzOp);
+    REG(ZBB_KEY_CPOP,  FormatI, CpopOp);
+    REG(ZBB_KEY_SEXTB, FormatI, SextBOp);
+    REG(ZBB_KEY_SEXTH, FormatI, SextHOp);
+    REG(key(Opcode::R_TYPE, 0x4, 0x04), FormatR, ZextHOp);
+    REG(ZBB_KEY_RORI,  FormatI, RoriOp);
+    REG(ZBB_KEY_ORCB,  FormatI, OrcbOp);
+    REG(ZBB_KEY_REV8,  FormatI, Rev8Op);
+
+    REG(key(Opcode::R_TYPE, 0x1, 0x09), FormatR, RolOp);
+    REG(key(Opcode::R_TYPE, 0x5, 0x09), FormatR, RorOp);
+
+    REG(key(Opcode::I_TYPE, 0x5, 0x01), FormatI, RoriOp);
 
     // ---- Syscall ----
     cpu.register_handler(

@@ -21,6 +21,8 @@ struct FormatR
         u32 a = s.regs[info.rs1];
         u32 b = s.regs[info.rs2];
 
+        // std::cerr << Oper::name << '\n';
+
         u32 r = Oper::exec(a, b);
 
         if (info.rd != 0)
@@ -41,7 +43,7 @@ struct FormatFR
         u32 a = s.fregs[info.rs1];
         u32 b = s.fregs[info.rs2];
 
-        std::cerr << Oper::name << '\n';
+        // std::cerr << Oper::name << '\n';
 
         u32 r = Oper::exec(a, b);
 

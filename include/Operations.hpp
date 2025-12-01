@@ -232,6 +232,8 @@ struct BgeuOp
 struct JalOp  { static constexpr const char* name = "jal"; };
 struct JalrOp { static constexpr const char* name = "jalr"; };
 
+// ---- M ----
+
 struct MulOp
 {
     static constexpr const char* name = "mul";
@@ -354,6 +356,17 @@ struct RemuOp
     }
 };
 
+// ---- F ----
+
+struct FlwOp
+{
+    static constexpr const char* name = "flw";
+};
+
+struct FswOp
+{
+    static constexpr const char* name = "fsw";
+};
 
 // Binary FP -> FP
 struct FaddSOp
@@ -511,7 +524,7 @@ struct FleSOp
     }
 };
 
-// Convert FP->int  (rm ignored; simple C++ semantics)
+// Convert FP->int
 
 struct FcvtWSOp
 {
@@ -642,6 +655,194 @@ struct FnmsubSOp
         f32 fc = f32_from_bits(c);
 
         return bits_from_f32(-fa * fb - fc);
+    }
+};
+
+// ---- Zbb  ----
+
+struct AndnOp
+{
+    static constexpr const char* name = "andn";
+    static u32 exec(u32 a, u32 b)
+    {
+        return a & ~b;
+    }
+};
+
+struct OrnOp
+{
+    static constexpr const char* name = "orn";
+    static u32 exec(u32 a, u32 b)
+    {
+        return a | ~b;
+    }
+};
+
+struct XnorOp
+{
+    static constexpr const char* name = "xnor";
+    static u32 exec(u32 a, u32 b)
+    {
+        return ~(a ^ b);
+    }
+};
+
+struct MinOp
+{
+    static constexpr const char* name = "min";
+    static u32 exec(u32 a, u32 b)
+    {
+        s32 sa = static_cast<s32>(a);
+        s32 sb = static_cast<s32>(b);
+        return static_cast<u32>(sa < sb ? sa : sb);
+    }
+};
+
+struct MaxOp
+{
+    static constexpr const char* name = "max";
+    static u32 exec(u32 a, u32 b)
+    {
+        s32 sa = static_cast<s32>(a);
+        s32 sb = static_cast<s32>(b);
+        return static_cast<u32>(sa > sb ? sa : sb);
+    }
+};
+
+struct MinuOp
+{
+    static constexpr const char* name = "minu";
+    static u32 exec(u32 a, u32 b)
+    {
+        return (a < b) ? a : b;
+    }
+};
+
+struct MaxuOp
+{
+    static constexpr const char* name = "maxu";
+    static u32 exec(u32 a, u32 b)
+    {
+        return (a > b) ? a : b;
+    }
+};
+
+struct ClzOp
+{
+    static constexpr const char* name = "clz";
+    static u32 exec(u32 a, [[maybe_unused]] s32 imm)
+    {
+        if (a == 0)
+            return 32u;
+        return static_cast<u32>(std::countl_zero(a));
+    }
+};
+
+struct CtzOp
+{
+    static constexpr const char* name = "ctz";
+    static u32 exec(u32 a, [[maybe_unused]] u32 imm)
+    {
+        if (a == 0)
+            return 32u;
+        return static_cast<u32>(std::countr_zero(a));
+    }
+};
+
+struct CpopOp
+{
+    static constexpr const char* name = "cpop";
+    static u32 exec(u32 a, [[maybe_unused]] u32 imm)
+    {
+        return static_cast<u32>(std::popcount(a));
+    }
+};
+
+struct SextBOp
+{
+    static constexpr const char* name = "sext.b";
+    static u32 exec(u32 a, [[maybe_unused]] u32 imm)
+    {
+        return static_cast<u32>(static_cast<s8>(a));
+    }
+};
+
+struct SextHOp
+{
+    static constexpr const char* name = "sext.h";
+    static u32 exec(u32 a, [[maybe_unused]] u32 imm)
+    {
+        return static_cast<u32>(static_cast<s16>(a));
+    }
+};
+
+struct ZextHOp
+{
+    static constexpr const char* name = "zext.h";
+    static u32 exec(u32 a, [[maybe_unused]] u32 b)
+    {
+        return a & 0xFFFFu;
+    }
+};
+
+struct RolOp
+{
+    static constexpr const char* name = "rol";
+    static u32 exec(u32 a, u32 b)
+    {
+        u32 sh = b & 31u;
+        if (sh == 0) return a;
+        return (a << sh) | (a >> ((32u - sh) & 31u));
+    }
+};
+
+struct RorOp
+{
+    static constexpr const char* name = "ror";
+    static u32 exec(u32 a, u32 b)
+    {
+        u32 sh = b & 31u;
+        if (sh == 0) return a;
+        return (a >> sh) | (a << ((32u - sh) & 31u));
+    }
+};
+
+struct RoriOp
+{
+    static constexpr const char* name = "rori";
+    static u32 exec(u32 a, s32 sh)
+    {
+        u32 s = static_cast<u32>(sh) & 31u;
+        if (s == 0) return a;
+        return (a >> s) | (a << ((32u - s) & 31u));
+    }
+};
+
+struct OrcbOp
+{
+    static constexpr const char* name = "orc.b";
+    static u32 exec(u32 a, [[maybe_unused]] u32 b)
+    {
+        u32 res = 0;
+        for (int byte = 0; byte < 4; ++byte)
+        {
+            u32 chunk = (a >> (byte * 8)) & 0xFFu;
+            u32 out_byte = (chunk == 0) ? 0x00u : 0xFFu;
+            res |= (out_byte << (byte * 8));
+        }
+        return res;
+    }
+};
+
+struct Rev8Op
+{
+    static constexpr const char* name = "rev8";
+    static u32 exec(u32 a, [[maybe_unused]] u32 b)
+    {
+        return ((a & 0x000000FFu) << 24)
+             | ((a & 0x0000FF00u) << 8)
+             | ((a & 0x00FF0000u) >> 8)
+             | ((a & 0xFF000000u) >> 24);
     }
 };
 

@@ -12,6 +12,8 @@ ExecutionResult run_program(Interpreter& cpu, int cycle_limit)
 
         auto [info, key] = Decoder::decode(instr, cpu.pc());
 
+        res.pc = info.pc;
+
         ExecutionStatus st = cpu.dispatch(cpu.state, info, key);
 
         res.cycles = cycles + 1;

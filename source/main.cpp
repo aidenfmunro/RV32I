@@ -30,6 +30,9 @@ int main(int argc, char* argv[])
     if (result.status == rv32i::ExecutionStatus::ProgramExit)
         return result.exit_code;
 
+    if (result.status == rv32i::ExecutionStatus::TrapIllegal)
+        std::cerr << "Trap! on instruction: " << result.pc  <<  "\n";
+
     std::cerr << "Program ended with status " << int(result.status) << "\n";
 
     return -1;

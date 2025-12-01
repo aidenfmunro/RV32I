@@ -1,6 +1,8 @@
 #include "Decoder.hpp"
 #include "BitHelpers.hpp"
 #include "Opcodes.hpp"
+#include "Zbb.hpp"
+
 #include <iostream>
 
 namespace rv32i {
@@ -85,6 +87,41 @@ std::pair<InstrInfo, u32> Decoder::decode(u32 instr_word, u32 pc)
     }
 
     key |= u32(opcode);
+
+    if (opcode == Opcode::I_TYPE)
+    {
+        const u32 imm = (instr_word >> 20) & 0xFFFu;
+
+        // Zbb pattern matching
+        if ((imm & 0xFE0u) == 0x600u)
+        {
+            switch (funct3)
+            {
+                case 0x1:
+                    switch (imm & 0x1F)
+                    {
+                        case 0x00: return {info, ZBB_KEY_CLZ};
+                        case 0x01: return {info, ZBB_KEY_CTZ};
+                        case 0x02: return {info, ZBB_KEY_CPOP};
+                        case 0x04: return {info, ZBB_KEY_SEXTB};
+                        case 0x05: return {info, ZBB_KEY_SEXTH};
+                        case 0x07: return {info, ZBB_KEY_ORCB};
+                        default: break;
+                    }
+
+                    break;
+
+                case 0x5:
+                    return {info, ZBB_KEY_RORI};
+            }
+        }
+
+        if (funct3 == 0x5 && (imm & 0xFE0u) == 0x680u)
+        {
+            return {info, ZBB_KEY_REV8};
+        }
+    }
+
 
     return {info, key};
 }
