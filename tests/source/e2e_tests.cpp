@@ -59,7 +59,7 @@ TEST_P(InterpreterE2E, RunsCorrectly)
     int exit_code = run_program(bin_path, tc.input, output);
 
     ASSERT_EQ(exit_code, tc.expected_exit) << "exit code mismatch for " << tc.name;
-    EXPECT_EQ(output, tc.expected_output)  << "stdout mismatch for " << tc.name;
+    EXPECT_EQ(output, tc.expected_output)  << "stdout mismatch for "    << tc.name;
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -69,7 +69,8 @@ INSTANTIATE_TEST_SUITE_P(
         E2ETestCase{"echo",       "123",      "123\n", 1},
         E2ETestCase{"isqrt",      "9\n",        "3\n"},
         E2ETestCase{"bubblesort", "3 3 1 2\n",  "1 2 3 \n"},
-        E2ETestCase{"fcalc",      "4\n", "2\n"}
+        E2ETestCase{"fcalc",      "4\n", "2\n"},
+        E2ETestCase{"fib",        "0\n", "0\n"}
         // add more here
     )
 );

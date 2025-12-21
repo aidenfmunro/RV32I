@@ -92,7 +92,7 @@ static void write_int_ln(int x)
     int n;
     write_int_core(x, buf, &n);
     buf[n++] = '\n';
-    (void)write(1, buf, n);
+    write(1, buf, n);
 }
 
 static void write_int_space(int x)
@@ -101,5 +101,5 @@ static void write_int_space(int x)
     int n;
     write_int_core(x, buf, &n);
     buf[n++] = ' ';
-    (void)write(1, buf, n);
+    write(1, buf, n);
 }

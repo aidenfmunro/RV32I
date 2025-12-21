@@ -33,6 +33,7 @@ set(E2E_PROGRAMS
   isqrt
   bubblesort
   fcalc
+  fib
   # add more here
 )
 
